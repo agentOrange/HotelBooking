@@ -23,7 +23,7 @@ public interface BookingManager {
          * @param room
          * @param date
          */
-        public void addBooking(String guest, Integer room, Date date);
+        public void addBooking(String guest, Integer room, Date date) throws BookingFailureException;
 
         /**
          * Return a list of all the available room numbers for the given date.

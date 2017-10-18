@@ -35,36 +35,43 @@ public class BookingManagerImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowIllegalArgumentExceptionWhenAddBookingWithNullGuest() {
+    public void shouldThrowIllegalArgumentExceptionWhenAddBookingWithNullGuest() throws Exception {
         testSubject.addBooking(null, 101, parseDate("2017-01-01"));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowIllegalArgumentExceptionWhenAddBookingWithNullRoom() {
+    public void shouldThrowIllegalArgumentExceptionWhenAddBookingWithNullRoom() throws Exception {
         testSubject.addBooking("Mr  Bean",null,parseDate("2017-01-01"));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowIllegalArgumentExceptionWhenAddBookingWithNullDate() {
+    public void shouldThrowIllegalArgumentExceptionWhenAddBookingWithNullDate() throws Exception {
         testSubject.addBooking("Mr  Bean",101,null);
     }
 
     @Test
-    public void shouldReturnFalseWhenCheckingRoomAvailabilityAfterBooking() {
+    public void shouldReturnFalseWhenCheckingRoomAvailabilityAfterBooking() throws Exception {
         Date dateToBook = parseDate("2017-01-01");
         testSubject.addBooking("Mr Bean", 101, dateToBook);
         assertFalse(testSubject.isRoomAvailable(101,dateToBook));
     }
 
+    @Test(expected = BookingFailureException.class)
+    public void shouldThrowBookingFailureExceptionWhenDoubleBooking() throws Exception {
+        Date dateToBook = parseDate("2017-01-01");
+        testSubject.addBooking("Mr Bean", 101, dateToBook);
+        testSubject.addBooking("Mr T",101,dateToBook);
+    }
+
     @Test
-    public void shouldReturnTrueWhenCheckingRoomAvailabilityUsingDifferentBooking() {
+    public void shouldReturnTrueWhenCheckingRoomAvailabilityUsingDifferentBooking() throws Exception {
         Date dateToBook = parseDate("2017-01-01");
         testSubject.addBooking("Mr Bean", 101, dateToBook);
         assertTrue(testSubject.isRoomAvailable(102,dateToBook));
     }
 
     @Test
-    public void shouldReturnTwoAvailableRooms() {
+    public void shouldReturnTwoAvailableRooms() throws Exception {
         Date unavailableDate = parseDate("2017-05-01");
         testSubject.addBooking("Mr A",101,unavailableDate);
         testSubject.addBooking("Mr B",201,unavailableDate);

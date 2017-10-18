@@ -42,29 +42,17 @@ public class BookingManagerImpl implements BookingManager {
         }
     }
 
-    public void addBooking(String guest, Integer room, Date date) {
+    public void addBooking(String guest, Integer room, Date date) throws BookingFailureException {
         if (Strings.isNullOrEmpty(guest) || room == null || date == null) {
             throw new IllegalArgumentException("Either guest, room or date parameter was null");
         }
-
-        try {
-            if(lock.tryLock(10, TimeUnit.SECONDS)){
-                if (isRoomAvailable(room, date)) {
-                    Room booking = rooms.get(room);
-                    booking.addBooking(guest,date);
-                    booking.setRoomNumber(room);
-                }else{
-                    throw new BookingFailureException("Booking failed for Guest:"+guest +" Room:"+room +" Date:"+date);
-                }
+            if (isRoomAvailable(room, date)) {
+                Room booking = rooms.get(room);
+                booking.addBooking(guest,date);
+                booking.setRoomNumber(room);
+            }else{
+                throw new BookingFailureException("Booking failed for Guest:"+guest +" Room:"+room +" Date:"+date);
             }
-        }catch(InterruptedException ie){
-            System.err.println(ie);
-        }catch (BookingFailureException bfe){
-            System.err.println(bfe);
-        }
-        finally {
-            lock.unlock();
-        }
     }
 
     /**
